@@ -18,8 +18,12 @@ FROM apache/hive:4.2.1
 USER root
 
 # Link the hadoop-aws and AWS SDK jars that the image ships into the metastore classpath
-RUN ln -s /opt/hadoop/share/hadoop/tools/lib/hadoop-aws-*.jar /opt/hive/lib/ && \
-    ln -s /opt/hadoop/share/hadoop/tools/lib/bundle-*.jar /opt/hive/lib/
+ADD --chmod=644 --checksum=sha256:a18508b9348af095ea41301e439354dbd449e304ac44c6885b2b4fe78de88126 \
+  https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/${HADOOP_VERSION}/hadoop-aws-${HADOOP_VERSION}.jar \
+  /opt/hive/lib/hadoop-aws-${HADOOP_VERSION}.jar
+ADD --chmod=644 --checksum=sha256:faf78ac4880f56cf52791d84ec1068ce7c66acc4295d580a726104b734c01fcd \
+  https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.11.271/aws-java-sdk-bundle-1.11.271.jar \
+  /opt/hive/lib/aws-java-sdk-bundle-1.11.271.jar
 
 # The entrypoint links this directory into the Hive config directory, over its own core-site.xml
 ENV HIVE_CUSTOM_CONF_DIR=/opt/hive/custom-conf
